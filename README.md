@@ -1,100 +1,171 @@
 # Design-and-Implementation-of-secured-communication-system-using-FPGA
-This project is designed to implement UART communication using FPGA and vivado
-Overview
-This repository contains source code, simulations, and documentation for the project “Design and Implementation of a Secured Communication System on FPGA.”
-The aim is to demonstrate several digital data communication techniques (including security primitives) on a Xilinx Spartan-7 (Boolean) FPGA board using UART—the most common embedded serial standard.
+# Design and Implementation of a Secured Communication System on FPGA
 
-Communication types implemented include simple loopback, simplex, and full-duplex UART links, as well as an XOR-based security enhancement, with all design files (.sv and .xdc), simulation results, and waveform images provided.
+## Overview
 
-Importance & Use
-FPGA-Based Communication: FPGAs provide real-time, reconfigurable and hardware-accelerated communication—suitable for learning and in industry.
+This repository contains source code, simulations, and documentation for the project *"Design and Implementation of a Secured Communication System on FPGA."* The aim is to demonstrate several digital data communication techniques (including security primitives) on a Xilinx Spartan-7 (“Boolean Board”) FPGA using UART—the most common embedded serial standard.
 
-Security: Integrating XOR encryption at the hardware level demonstrates the foundation of fast, low-resource cryptographic primitives for embedded and IoT systems.
+Communication types implemented include:
+- Simple loopback
+- Simplex
+- Full-duplex UART links
+- XOR-based security enhancements
 
-Modular Designs: The included modules (loopback, simplex, duplex, XOR-based) can be adapted for various practical uses: secure serial links, testability of hardware, and teaching digital communication fundamentals.
+All design files (.sv and .xdc), simulation results, and waveform images are provided.
 
-Hardware Used
-Boolean Spartan-7 Board:
-A Xilinx Spartan-7 FPGA development board (often called “Boolean Board,” with PMODs, switches, LEDs, on-board USB-UART) is used for all implementations, chosen for its versatility, educational support, and abundant GPIO.
+## Table of Contents
 
-Project Flow
-Below is the stepwise flow with brief explanations of each design block and included files:
+- [Importance & Use](#importance--use)
+- [Hardware Used](#hardware-used)
+- [Project Flow](#project-flow)
+  - [UART Loopback Communication (Single FPGA)](#uart-loopback-communication-single-fpga)
+  - [UART Loopback Using Separate TX and RX Blocks (Single FPGA)](#uart-loopback-using-separate-tx-and-rx-blocks-single-fpga)
+  - [Simplex UART Communication (Two FPGAs)](#simplex-uart-communication-two-fpgas)
+  - [Full-Duplex UART Communication (Two FPGAs, PMOD Cross-Connect)](#full-duplex-duplex-uart-communication-two-fpgas-pmod-cross-connect)
+  - [Simplex UART with XOR Security](#simplex-uart-with-xor-security)
+- [Simulation Results & Images](#simulation-results--images)
+- [Acknowledgments](#acknowledgments)
+- [Main Objectives](#main-objectives)
+- [Significance](#significance)
+- [Summary](#summary)
 
-1. UART Loopback Communication (Single FPGA)
-Description: FPGA echoes received serial data back—rx is directly looped to tx.
+## Importance & Use
 
-Purpose: Basic test of UART peripheral, cable, and PC terminal setup.
+- *FPGA-Based Communication:*  
+  FPGAs provide real-time, reconfigurable, and hardware-accelerated communication—useful for industry and educational purposes.
 
-Files:
+- *Security:*  
+  Integrating XOR encryption at the hardware level demonstrates the foundation of fast, low-resource cryptographic primitives for embedded and IoT systems.
 
-uart_loopback_sv.sv: SystemVerilog module where tx = rx logic is implemented.
+- *Modular Designs:*  
+  All modules (loopback, simplex, duplex, XOR-secured) are designed for adaptability: secure serial links, hardware testability, and teaching digital communication.
 
-uart_loopback.xdc: Pin mapping for clock, UART RX/TX.
+## Hardware Used
 
-How to use: Send a character from your PC terminal; you receive it back instantly. Useful for basic debugging.
+- *Boolean Spartan-7 Board:*  
+  Xilinx Spartan-7 FPGA development board (“Boolean Board”), featuring PMODs, switches, LEDs, and on-board USB-UART for all implementations.
 
-2. UART Loopback using Separate TX and RX Blocks (Single FPGA)
-Description: Implements independent transmitter and receiver modules supporting standard UART frames (start/stop bits, 8-bit data).
+## Project Flow
 
-Purpose: Demonstrates real UART protocol and parallelizing data for transmit and receive paths.
+### UART Loopback Communication (Single FPGA)
 
-Files:
+*Description:*  
+FPGA echoes received serial data back (rx directly looped to tx).  
+*Purpose:*  
+Basic UART peripheral, cable, and PC terminal setup test.
 
-uart_tx.sv, uart_rx.sv: Transmitter/Receiver modules.
+*Files:*
+- uart_loopback_sv.sv: SystemVerilog module (tx = rx logic)
+- uart_loopback.xdc: Pin mapping (clock, UART RX/TX)
 
-uart_loopback_parallel.sv: Top module connecting TX and RX.
+How to use:  
+Send a character from your PC terminal; you receive it back instantly.
 
-uart_loopback_parallel.xdc: Constraints for clock, RX, TX pins.
+---
 
-How to use: Connect your PC via USB-UART; characters are sent through RX path and echoed back via TX with protocol handling.
+### UART Loopback Using Separate TX and RX Blocks (Single FPGA)
 
-3. Simplex UART Communication (Two FPGAs)
-Description: One FPGA acts as transmitter and another as receiver, with one-way (simplex) data flow using UART protocol.
+*Description:*  
+Independent transmitter and receiver modules support standard UART frames (start/stop, 8-bit data).  
+*Purpose:*  
+Demonstrates real UART protocol and parallel data paths.
 
-Purpose: Demonstrates one-way data transfer and the need for shared ground; shows board-to-board digital interfacing.
+*Files:*
+- uart_tx.sv, uart_rx.sv: Transmitter/Receiver modules
+- uart_loopback_parallel.sv: Top module connecting TX and RX
+- uart_loopback_parallel.xdc: Constraints for clock, RX, TX pins
 
-Files:
+How to use:  
+Send from PC via USB-UART; character is processed and echoed.
 
-simplex_tx.sv, simplex_rx.sv: Top modules for transmitter/receiver FPGAs.
+---
 
-simplex_tx.xdc, simplex_rx.xdc: Pin assignments (using PMOD/GPIO for TX, RX).
+### Simplex UART Communication (Two FPGAs)
 
-How to use: Connect TX of FPGA1 to RX of FPGA2 (and GND), and test with data sent from one PC; verify reception on the other.
+*Description:*  
+One FPGA transmits, the other receives (one-way).  
+*Purpose:*  
+Demonstrates one-way transfer, shared ground, and board-to-board interfacing.
 
-4. Full-Duplex (Duplex) UART Communication (Two FPGAs, PMOD Cross-Connect)
-Description: Both FPGAs send and receive simultaneously; both are connected to their own PC via USB-UART and to each other via PMOD cross-connect (TX↔RX, GND↔GND).
+*Files:*
+- simplex_tx.sv, simplex_rx.sv
+- simplex_tx.xdc, simplex_rx.xdc
 
-Purpose: Demonstrates bi-directional UART, more realistic of real-world hardware links.
+How to use:  
+Connect TX of FPGA1 to RX of FPGA2 (+ GND); test with PC data.
 
-Files:
+---
 
-uart_full_duplex_bridge.sv: Top module that bridges PC↔FPGA and FPGA↔FPGA.
+### Full-Duplex (Duplex) UART Communication (Two FPGAs, PMOD Cross-Connect)
 
-uart_tx.sv, uart_rx.sv: UART building blocks.
+*Description:*  
+Both FPGAs send and receive simultaneously, connected via PMODs.  
+*Purpose:*  
+Demonstrates bi-directional UART.
 
-duplex.xdc: Pin mapping for clock, RX/TX, PMOD signals for both boards.
+*Files:*
+- uart_full_duplex_bridge.sv
+- uart_tx.sv, uart_rx.sv
+- duplex.xdc
 
-How to use: Each PC can send to and receive from the other in real time via the FPGAs.
+How to use:  
+Each PC sends/receives data through its FPGA in real time.
 
-5. Simplex UART with XOR Security
-Description: Adds an XOR operation between data and a security key before transmission, and removes it after reception (decrypt).
+---
 
-Purpose: Demonstrates basic stream cipher operation for embedded security.
+### Simplex UART with XOR Security
 
-Files:
+*Description:*  
+Adds XOR operation with a key for basic encryption/decryption.  
+*Purpose:*  
+Demonstrates a simple stream cipher for embedded security.
 
-simplex_xor_tx.sv, simplex_xor_rx.sv: Modules for TX and RX with XOR security.
+*Files:*
+- simplex_xor_tx.sv, simplex_xor_rx.sv
+- xor_key.sv (optional)
+- simplex_xor.xdc
 
-xor_key.sv (optional): Key generator module.
+How to use:  
+Data is restored only if the receiver's key matches—shows basic hardware security.
 
-simplex_xor.xdc: Constraints for PMOD or GPIO for secured transmission.
+---
 
-How to use: Only with the correct key at receiver, the original data is restored—demonstrates fundamental security in hardware.
+## Simulation Results & Images
 
-6. Simulation Results & Images
-Simulation testbenches and waveform screenshots are provided for each design (*.sv, .v, and image).
+Simulation testbenches and waveform screenshots are included (.sv, .v, and images) to validate correct operation.
 
-Images help validate the correct operation and can be used for documentation or as reference for your own tests.
+## Acknowledgments
+
+Project based on Xilinx Spartan-7 Boolean FPGA board.  
+More info: See Boolean Board Spartan-7 documentation.
+
+## Main Objectives
+
+- *Implement Robust Digital Communication on FPGA:*  
+  Design, simulate, and deploy various UART schemes (loopback, simplex, full-duplex).
+
+- *Integrate Security at Hardware Level:*  
+  Demonstrate real-time encryption (XOR stream cipher) with hardware implementation.
+
+- *Enable Hardware-Based Protocol Experimentation:*  
+  Modular, reusable Verilog/SystemVerilog designs for education, prototyping, and secure embedded communication.
+
+- *Demonstrate Practical Inter-Device Communication:*  
+  Facilitate transfer between PCs and FPGAs using UART and PMODs, modeling real-world links.
+
+## Significance
+
+- *Real-Time Security:* Hardware encryption for fast, low-latency, energy-efficient secure communication—critical for embedded and IoT devices.
+- *Educational Value:* Illustrates UART basics, clock domain crossing, timing, secure protocol design—ideal for learning.
+- *Foundation for Advanced Cryptosystems:* Paves way for more complex cryptography on FPGAs.
+- *Testing and Debugging Platform:* A practical platform to test digital/secure comms on real hardware.
+- *Versatility:* Modular structure for extension or integration into larger FPGA-based systems.
+
+## Summary
+
+This project teaches and demonstrates secure serial communication using FPGAs, and lays a foundation for secure hardware design in modern embedded/connected systems.
+
+---
 
 Acknowledgments
 Project based on a Xilinx Spartan-7 Boolean FPGA board.
