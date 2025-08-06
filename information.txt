@@ -1,0 +1,7 @@
+1 -> UART Communication using loopback system
+2 -> UART Communication using VIO(Virtual Input Output) Approach
+3 -> UART Communication on a single system
+4 -> Simplex UART Communication using two system 
+5 -> Duplex UART Communication using two system
+6 -> Secure Simplex UART Communication using two system(encryption and decryption using xor logic)
+
